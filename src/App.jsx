@@ -1,11 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
 function App() {
-  const [sessionTime, setSessionTime] = useState(5);
-  const [breakTime, setBreakTime] = useState(5 * 60);
+  const [sessionTime, setSessionTime] = useState(25);
+  const [breakTime, setBreakTime] = useState(5);
   const [isSession, setIsSession] = useState(true);
   const [timeLeft, setTimeLeft] = useState(sessionTime);
+  const [timerRunning, setTimerRunning] = useState(false);
+
+  useEffect(() => {
+    let timerInterval = null;
+    if (timerRunning) {
+      timerInterval = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (!timerRunning) {
+      clearInterval(timerInterval);
+    } else {
+      console.log("error");
+    }
+    console.log(timeLeft);
+
+    if (timeLeft <= 0) {
+      if (isSession) {
+        setIsSession(false);
+        setTimeLeft(breakTime);
+      } else {
+        setIsSession(true);
+        setTimeLeft(sessionTime);
+      }
+    }
+
+    return () => clearInterval(timerInterval);
+    timerInterval = null;
+  }, [timerRunning, timeLeft]);
+
+  useEffect(() => {
+    if (isSession) {
+      setTimeLeft(sessionTime * 60);
+    } else if (!isSession) {
+      setTimeLeft(breakTime * 60);
+    } else {
+      console.log("error");
+    }
+  }, [sessionTime, breakTime, isSession]);
+
+  const startStopTimer = () => {
+    setTimerRunning((prev) => !prev);
+  };
 
   const formatTime = (time) => {
     let minutes = Math.floor(time / 60);
@@ -21,25 +63,44 @@ function App() {
 
   //todo: could use cleaning up, works tho
   const increaseSessionTime = () => {
-    setSessionTime((prevSessionTime) => prevSessionTime + 60);
+    if (timerRunning) {
+      return;
+    }
+    if (sessionTime < 60) {
+      setSessionTime((prevSessionTime) => prevSessionTime + 1);
+    }
   };
   const decreaseSessionTime = () => {
-    if (sessionTime > 60) {
-      setSessionTime((prevSessionTime) => prevSessionTime - 60);
+    if (timerRunning) {
+      return;
+    }
+    if (sessionTime > 1) {
+      setSessionTime((prevSessionTime) => prevSessionTime - 1);
     }
   };
   const increaseBreakTime = () => {
-    if (breakTime < 60 * 60) {
-      setBreakTime((prevBreakTime) => prevBreakTime + 60);
+    if (timerRunning) {
+      return;
+    }
+    if (breakTime < 60) {
+      setBreakTime((prevBreakTime) => prevBreakTime + 1);
     }
   };
   const decreaseBreakTime = () => {
-    setBreakTime((prevBreakTime) => prevBreakTime - 60);
+    if (timerRunning) {
+      return;
+    }
+    if (breakTime > 1) {
+      setBreakTime((prevBreakTime) => prevBreakTime - 1);
+    }
   };
 
   const resetTimer = () => {
-    setSessionTime(25 * 60);
-    setBreakTime(5 * 60);
+    setSessionTime(25);
+    setBreakTime(5);
+    setIsSession(true);
+    setTimerRunning(false);
+    setTimeLeft(sessionTime);
   };
 
   const displayText = () => {
@@ -55,7 +116,7 @@ function App() {
       <div id="inputs-wrapper">
         <div id="session-wrapper">
           <h2 id="session-label">Session Time</h2>
-          <h2 id="session-length">{formatTime(sessionTime)}</h2>
+          <h2 id="session-length">{sessionTime}</h2>
           <button id="session-increment" onClick={increaseSessionTime}>
             Increase
           </button>
@@ -65,7 +126,7 @@ function App() {
         </div>
         <div id="break-wrapper">
           <h2 id="break-label">Break Time</h2>
-          <h2 id="break-length">{formatTime(breakTime)}</h2>
+          <h2 id="break-length">{breakTime}</h2>
           <button id="break-increment" onClick={increaseBreakTime}>
             Increase
           </button>
@@ -77,7 +138,9 @@ function App() {
       <div id="timer-wrapper">
         <h2 id="timer-label">{displayText()}</h2>
         <h2 id="time-left">{formatTime(timeLeft)}</h2>
-        <button id="start_stop">Start / Stop</button>
+        <button id="start_stop" onClick={startStopTimer}>
+          Start / Stop
+        </button>
         <button id="reset" onClick={resetTimer}>
           Reset
         </button>
