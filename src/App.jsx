@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./styles.css";
 
 function App() {
@@ -13,21 +13,23 @@ function App() {
     if (timerRunning) {
       timerInterval = setInterval(() => {
         setTimeLeft((prevTime) => prevTime - 1);
-      }, 1000);
+      }, 999);
     } else if (!timerRunning) {
       clearInterval(timerInterval);
     } else {
       console.log("error");
     }
-    console.log(timeLeft);
 
     if (timeLeft <= 0) {
+      document.getElementById("beep").play();
       if (isSession) {
         setIsSession(false);
-        setTimeLeft(breakTime);
-      } else {
+        setTimeLeft(breakTime * 60);
+      } else if (!isSession) {
         setIsSession(true);
-        setTimeLeft(sessionTime);
+        setTimeLeft(sessionTime * 60);
+      } else {
+        console.log("error");
       }
     }
 
@@ -100,14 +102,18 @@ function App() {
     setBreakTime(5);
     setIsSession(true);
     setTimerRunning(false);
-    setTimeLeft(sessionTime);
+    setTimeLeft(sessionTime * 60);
+    document.getElementById("beep").pause();
+    document.getElementById("beep").currentTime = 0;
   };
 
   const displayText = () => {
     if (isSession) {
       return "Session";
-    } else {
+    } else if (!isSession) {
       return "Break";
+    } else {
+      console.log("error");
     }
   };
   return (
@@ -144,6 +150,10 @@ function App() {
         <button id="reset" onClick={resetTimer}>
           Reset
         </button>
+        <audio
+          id="beep"
+          src="https://upload.wikimedia.org/wikipedia/commons/1/11/H_is_for_horse.ogg"
+        ></audio>
       </div>
     </>
   );
