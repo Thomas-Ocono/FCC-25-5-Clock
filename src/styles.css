@@ -1,3 +1,88 @@
 body {
-  background-color: bisque;
+  background-color: rgb(47, 71, 124);
+  color: white;
+  font-family: monospace;
+}
+#title {
+  font-size: 5rem;
+  text-align: center;
+}
+#session-wrapper {
+  background-color: gray;
+  font-size: 1.5rem;
+  width: 25%;
+  text-align: center;
+  border-radius: 10px;
+  border: 3px solid black;
+  padding-bottom: 25px;
+  margin-right: 25px;
+}
+#break-wrapper {
+  background-color: gray;
+  font-size: 1.5rem;
+  width: 25%;
+  text-align: center;
+  border-radius: 10px;
+  border: 3px solid black;
+  padding-bottom: 25px;
+  margin-left: 25px;
+}
+#break-label {
+  /* to sync it with session time on mobile */
+  padding-left: 19.7px;
+  padding-right: 19.7px;
+}
+#session-wrapper button {
+  font-size: 1rem;
+  padding: 10px;
+  margin: 7px;
+  border-radius: 5px;
+}
+#session-wrapper button:hover {
+  background-color: lightgray;
+}
+#break-wrapper button {
+  font-size: 1rem;
+  padding: 10px;
+  margin: 7px;
+  border-radius: 5px;
+}
+#break-wrapper button:hover {
+  background-color: lightgray;
+}
+#inputs-wrapper {
+  display: flex;
+  justify-content: center;
+}
+#timer-wrapper {
+  background-color: gray;
+  font-size: 1.5rem;
+  width: 25%;
+  text-align: center;
+  border-radius: 10px;
+  border: 3px solid black;
+  padding-bottom: 25px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+}
+#timer-wrapper button {
+  font-size: 1rem;
+  padding: 10px;
+  margin: 7px;
+  border-radius: 10px;
+}
+#start_stop {
+  background-color: green;
+  color: white;
+}
+#start_stop:hover {
+  background-color: darkgreen;
+}
+#reset {
+  background-color: darkgray;
+  color: white;
+}
+#reset:hover {
+  background-color: gray;
 }
