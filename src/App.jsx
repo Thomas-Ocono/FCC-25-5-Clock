@@ -7,6 +7,7 @@ function App() {
   const [isSession, setIsSession] = useState(true);
   const [timeLeft, setTimeLeft] = useState(sessionTime);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [displayText, setDisplayText] = useState("Session");
 
   useEffect(() => {
     let timerInterval = null;
@@ -20,17 +21,17 @@ function App() {
       console.log("error");
     }
 
-    if (timeLeft <= 0) {
+    if (isSession & (timeLeft <= 0)) {
       document.getElementById("beep").play();
-      if (isSession) {
-        setIsSession(false);
-        setTimeLeft(breakTime * 60);
-      } else if (!isSession) {
-        setIsSession(true);
-        setTimeLeft(sessionTime * 60);
-      } else {
-        console.log("error");
-      }
+      setDisplayText("Break");
+      setIsSession(false);
+      setTimeLeft(breakTime * 60);
+    }
+    if (!isSession & (timeLeft <= 0)) {
+      document.getElementById("beep").play();
+      setDisplayText("Session");
+      setIsSession(true);
+      setTimeLeft(sessionTime * 60);
     }
 
     return () => clearInterval(timerInterval);
@@ -103,19 +104,11 @@ function App() {
     setIsSession(true);
     setTimerRunning(false);
     setTimeLeft(sessionTime * 60);
+    setDisplayText("Session");
     document.getElementById("beep").pause();
     document.getElementById("beep").currentTime = 0;
   };
 
-  const displayText = () => {
-    if (isSession) {
-      return "Session";
-    } else if (!isSession) {
-      return "Break";
-    } else {
-      console.log("error");
-    }
-  };
   return (
     <>
       <h1 id="title">25 + 5 Clock</h1>
@@ -142,7 +135,7 @@ function App() {
         </div>
       </div>
       <div id="timer-wrapper">
-        <h2 id="timer-label">{displayText()}</h2>
+        <h2 id="timer-label">{displayText}</h2>
         <h2 id="time-left">{formatTime(timeLeft)}</h2>
         <button id="start_stop" onClick={startStopTimer}>
           Start / Stop
